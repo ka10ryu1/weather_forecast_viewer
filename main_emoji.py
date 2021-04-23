@@ -6,14 +6,6 @@ from bs4 import BeautifulSoup
 from util import command
 from text_request import get_txt
 
-"""
-ONNX化はPytorhでできる
-ONNXランタイムを試してみる
-OAK試してみる話
-クリエイター
-UNITYのデータセットを試したい
-"""
-
 
 def txt2icon(txt):
     if '01' in txt:  # 快晴
