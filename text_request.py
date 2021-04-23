@@ -6,14 +6,6 @@ import json
 import requests
 from bs4 import BeautifulSoup
 
-"""
-ONNX化はPytorhでできる
-ONNXランタイムを試してみる
-OAK試してみる話
-クリエイター
-UNITYのデータセットを試したい
-"""
-
 
 class UrlGen(object):
 
