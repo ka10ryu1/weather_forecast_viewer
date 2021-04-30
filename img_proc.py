@@ -12,7 +12,7 @@ from bs4 import BeautifulSoup
 
 class HTML2Fig(object):
 
-    def __init__(self, html_doc, bg, fg):
+    def __init__(self, html_doc, bg, fg, small=False):
         self._hour = []
         self._symbol = []
         self._temp = []
@@ -21,6 +21,7 @@ class HTML2Fig(object):
         self._timestamp = None
         self._bg = bg
         self._fg = fg
+        self._small = small
         self.__call__(html_doc)
 
     @property
@@ -92,9 +93,12 @@ class HTML2Fig(object):
             date, time = sfc.get('from').split('T')
             d = int(date.split('-')[2])
             h = int(time.split(':')[0]) + 9
-            self._hour.append(
-                f'{d if h <= 24 else (d + 1)}-{h if h <= 24 else (h - 24)}'
-            )
+            if self._small:
+                h =f'{h if h <= 24 else (h - 24)}'
+            else:
+                h =f'{d if h <= 24 else (d + 1)}-{h if h <= 24 else (h - 24)}'
+
+            self._hour.append(h)
             self._symbol.append(self._icon(sfc.symbol, 'var'))
             self._temp.append(self._float(sfc.temperature, 'value'))
             self._humid.append(self._float(sfc.humidity, 'value'))
@@ -107,9 +111,10 @@ class HTML2Fig(object):
     def _value_plot(self, ax, x, y, offset):
 
         for _x, _y in zip(x, y):
+            y_val = f'{int(_y)}' if self._small else f'{_y:.1f}' 
             ax.text(
-                _x, _y + offset, f'{_y:.1f}',
-                horizontalalignment='center', color=self._fg
+                _x, _y + offset, y_val,
+                horizontalalignment='center', color=self._fg, fontsize=15
             )
 
     def _set_spines(self, ax):
@@ -123,6 +128,7 @@ class HTML2Fig(object):
         # tick setting
         ax.tick_params(direction='in', length=6, width=2, color=self._fg)
         ax.tick_params(axis='both', colors=self._fg)
+        ax.tick_params(labelsize=14)
 
     def temp_plot(self, ax, offset):
         x = self._hour
