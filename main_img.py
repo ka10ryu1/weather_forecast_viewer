@@ -29,8 +29,8 @@ def forecast(html_doc, dark_mode=False, row=4, col=1, tmp_row=3, font='Meiryo'):
     plt.tight_layout()
     fig.text(0.1, 0.91, h2f.timestamp, color=fg)
     fig.canvas.draw()
-    draw_img(fig, h2f.symbol, (22, 48, 24), 60)
-    return 0
+    img = draw_img(fig, h2f.symbol, (22, 48, 24), 60)
+    return img
 
 
 def forecast_all(html_doc, dark_mode=False, row=6, col=1, tmp_row=4, font='Meiryo'):
@@ -59,16 +59,17 @@ def forecast_all(html_doc, dark_mode=False, row=6, col=1, tmp_row=4, font='Meiry
 
     plt.tight_layout()
     fig.canvas.draw()
-    draw_img(fig, h2f.symbol, (18, 55, 40))
-    return 0
+    img = draw_img(fig, h2f.symbol, (18, 55, 40))
+    return img
 
 
 def main(args):
-    if (text := get_txt(args, 'forecast')) is None:
+    text = get_txt(args, 'forecast')
+    if text is None:
         return -1
 
-    forecast_all(text, dark_mode=args.dark)
-    forecast(text, dark_mode=args.dark)
+    forecast_all(text, dark_mode=args.dark).show()
+    forecast(text, dark_mode=args.dark).show()
     return 0
 
 

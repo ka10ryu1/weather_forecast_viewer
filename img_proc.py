@@ -49,7 +49,8 @@ class HTML2Fig(object):
         temp = self._temp[-1]
         humid = self._humid[-1]
         wind = self._wind[-1]
-        return f'{hour=:5}, {symbol=:},\t{temp=:5.2f}, {humid=:4.1f}, {wind=:5.2f}'
+        # return f'{hour=:5}, {symbol=:},\t{temp=:5.2f}, {humid=:4.1f}, {wind=:5.2f}'
+        return f'h={hour:5}, sym={symbol:},\ttmp{temp:5.2f}, hmd={humid:4.1f}, win={wind:5.2f}'
 
     def _txt2icon(self, txt, base=Path.cwd() / 'symbol', ext='.png'):
 
@@ -218,4 +219,4 @@ def draw_img(fig, symbol, offset, img_size=50):
     clear_img = Image.new('RGBA', (fw, fh))
     clear_img.paste(img, (offset[1], offset[2]))
     total_img = Image.alpha_composite(fig_img, clear_img)
-    total_img.show()
+    return total_img
