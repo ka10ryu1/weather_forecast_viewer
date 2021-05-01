@@ -3,8 +3,8 @@
 # pylint: disable=invalid-name,no-member
 from bs4 import BeautifulSoup
 
-from util import command
-from text_request import get_txt
+from util.config import command
+from util.text_request import get_txt
 
 
 def txt2icon(txt):

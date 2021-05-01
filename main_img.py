@@ -3,9 +3,9 @@
 # pylint: disable=invalid-name,no-member
 import matplotlib.pyplot as plt
 
-from util import command
-from text_request import get_txt
-from img_proc import HTML2Fig, draw_img
+from util.config import command
+from util.text_request import get_txt
+from util.img_proc import HTML2Fig, draw_img
 
 
 def forecast(html_doc, dark_mode=False, row=4, col=1, tmp_row=4, font='IPAexGothic'):

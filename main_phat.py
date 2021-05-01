@@ -6,9 +6,9 @@ from pathlib import Path
 
 from inky.auto import auto
 
-from util import command
-from text_request import get_txt
-from main_img import forecast
+from util.config import command
+from util.text_request import get_txt
+from util.main_img import forecast
 
 def main(args):
     print('Get weather forecast data...')
