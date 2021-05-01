@@ -130,11 +130,13 @@ class HTML2Fig(object):
         ax.tick_params(axis='both', colors=self._fg)
         ax.tick_params(labelsize=14)
 
-    def temp_plot(self, ax, offset):
+    def temp_plot(self, ax, offset, gray=False):
         x = self._hour
         y = self._temp
 
-        if np.min(y) < -10:
+        if gray:
+            color = 'white'
+        elif np.min(y) < -10:
             color = 'black'
         elif np.min(y) < 0:
             color = 'cornflowerblue'
@@ -179,17 +181,23 @@ class HTML2Fig(object):
 
         x = np.array(x)
         y = np.array(y)
+        color = 'white' if gray else 'mediumblue' 
         ax.scatter(
-            x[y < 10], y[y < 10], c='mediumblue', zorder=10
+            x[y < 10], y[y < 10], c=color, zorder=10
         )
+        color = 'white' if gray else 'gold' 
         ax.scatter(
-            x[(y >= 10) & (y < 20)], y[(y >= 10) & (y < 20)], c='gold', zorder=10
+            x[(y >= 10) & (y < 20)], y[(y >= 10) & (y < 20)],
+            c=color, zorder=10
         )
+        color = 'white' if gray else 'orange' 
         ax.scatter(
-            x[(y >= 20) & (y < 30)], y[(y >= 20) & (y < 30)], c='orange', zorder=10
+            x[(y >= 20) & (y < 30)], y[(y >= 20) & (y < 30)],
+            c=color, zorder=10
         )
+        color = 'white' if gray else 'firebrick' 
         ax.scatter(
-            x[y >= 30], y[y >= 30], c='firebrick', zorder=10
+            x[y >= 30], y[y >= 30], c=color, zorder=10
         )
 
     def other_plot(self, ax, y, color, ylim):

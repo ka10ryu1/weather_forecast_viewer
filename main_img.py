@@ -20,7 +20,7 @@ def forecast(html_doc, dark_mode=False, row=4, col=1, tmp_row=4, font='IPAexGoth
     h2f = HTML2Fig(html_doc, bg, fg, small=True)
     h2f.temp_plot(
         fig.add_subplot(row, col, (2, tmp_row), fc=bg),
-        2
+        2, gray=True
     )
     # h2f.other_plot(
     #     fig.add_subplot(row, col, row, fc=bg),
