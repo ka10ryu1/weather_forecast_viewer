@@ -23,7 +23,11 @@ Raspberry Pi ImagerでOSをインストールする。
 
 Raspberry Pi にinky pHatを取り付け、OSを起動したら以下の手順に従ってセットアップする
 
-https://learn.pimoroni.com/tutorial/sandyj/getting-started-with-inky-phat
+https://learn.pimoroni.com/tutorial/sandyj/getting-started-with-inky-phat  
+
+example
+
+https://github.com/pimoroni/inky
 
 ## ライブラリ
 
