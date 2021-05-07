@@ -12,7 +12,7 @@ from bs4 import BeautifulSoup
 
 class HTML2Fig(object):
 
-    def __init__(self, html_doc, bg, fg, small=False):
+    def __init__(self, html_doc, bg, fg, small=False, base=Path.cwd() / 'symbol'):
         self._hour = []
         self._symbol = []
         self._temp = []
@@ -22,6 +22,7 @@ class HTML2Fig(object):
         self._bg = bg
         self._fg = fg
         self._small = small
+        self._base = base
         self.__call__(html_doc)
 
     @property
@@ -53,7 +54,7 @@ class HTML2Fig(object):
         # return f'{hour=:5}, {symbol=:},\t{temp=:5.2f}, {humid=:4.1f}, {wind=:5.2f}'
         return f'h={hour:5}, sym={symbol:},\ttmp{temp:5.2f}, hmd={humid:4.1f}, win={wind:5.2f}'
 
-    def _txt2icon(self, txt, base=Path.cwd() / 'symbol', ext='.png'):
+    def _txt2icon(self, txt, ext='.png'):
 
         if '01' in txt:    # 快晴
             name = '2600' if 'd' in txt else '2b50'
@@ -74,7 +75,7 @@ class HTML2Fig(object):
         elif '50' in txt:  # 霧
             name = '1f32b'
 
-        return base / f'{name}{ext}'
+        return self._base / f'{name}{ext}'
 
     def _str(self, soup, tag):
         return soup.get(tag)

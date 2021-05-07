@@ -9,8 +9,12 @@ def command():
     parser = argparse.ArgumentParser(description='天気表示')
 
     parser.add_argument(
-        '--api_key', default=Path().cwd() / 'weather_config.json',
+        '--api_key', type=Path, default=Path().cwd() / 'weather_config.json',
         help='OpenWeatherMapのAPI key[default: %(default)s]'
+    )
+    parser.add_argument(
+        '--symbol', type=Path, default=Path().cwd() / 'symbol',
+        help='Forecast Icon[default: %(default)s]'
     )
     parser.add_argument(
         '--zip_code', default='211-0014',

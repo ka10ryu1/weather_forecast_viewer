@@ -1,6 +1,5 @@
-#!/usr/bin/env python3
-# -*-coding: utf-8 -*-
-# pylint: disable=invalid-name,no-member
+#!/usr/bin/env python3 -*-coding: utf-8 -*- pylint: 
+# disable=invalid-name,no-member
 import json
 
 import requests

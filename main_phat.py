@@ -23,9 +23,9 @@ def main(args):
     inky_size = inky_disp.resolution
     print('pHat Display Size:', inky_size)
 
-    img = forecast(text, dark_mode=True, font='IPAexGothic').resize(inky_size).convert('RGB')
+    img = forecast(text, args.symbol, dark_mode=True, font='IPAexGothic').resize(inky_size).convert('RGB')
     print(img.size)
-    y, w = yellow_mask(img)
+    y, w, _ = yellow_mask(img)
     img = convert_img(w, y, inky_size)
     inky_disp.set_image(img.rotate(180))
     inky_disp.show()
