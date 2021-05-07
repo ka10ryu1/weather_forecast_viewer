@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*-coding: utf-8 -*-
 # pylint: disable=invalid-name,no-member
+import time
 from PIL import Image
 from pathlib import Path
 
@@ -13,7 +14,8 @@ except ModuleNotFoundError as e:
 
 
 # , mask=(inky_display.WHITE, inky_display.BLACK, inky_display.RED)):
-def yellow_mask(src):
+def yellow_mask(img,max_val=255):
+    _, _, src = img.split()
     _y = Image.new('1', src.size)
     _w = Image.new('1', src.size)
 
@@ -21,32 +23,38 @@ def yellow_mask(src):
     colors = []
     for x in range(w):
         for y in range(h):
-            p = src.getpixel((x, y))
+            pos = (x, y)
+            p = src.getpixel(pos)
             colors.append(p)
             if p < 60:
-                _y.putpixel((x, y), 255)
+                _y.putpixel(pos, max_val)
             elif 100 < p:
-                _w.putpixel((x, y), 255)
+                _w.putpixel(pos, max_val)
 
-    print(sorted(list(set(colors))))
+    print('yellow mask:', sorted(list(set(colors))))
     return _y, _w
 
 
 def convert_img(white, yellow, img_size):
     img = Image.new('P', img_size)
-    w, h = img.size
+    w, h = white.size
+    cnt = [0, 0]
     for x in range(w):
         for y in range(h):
             pos = (x, y)
             val_w = white.getpixel(pos)
             val_y = yellow.getpixel(pos)
+            # print(white.size, yellow.size, img.size, pos, val_w, val_y)
             if val_w > 100:
+                cnt[0] += 1
                 img.putpixel(pos, 0)
             elif val_y > 100:
+                cnt[1] += 1
                 img.putpixel(pos, 2)
             else:
                 img.putpixel(pos, 1)
 
+    print('convert img:', cnt)
     return img
 
 
@@ -63,15 +71,14 @@ def main():
 
     for fp in Path('symbol').iterdir():
         print(fp.as_posix())
-        img = Image.open(fp).resize((120, 120)).convert('RGB')
-        r, g, b = img.split()
-        y, w = yellow_mask(b)
+        img = Image.open(fp).resize((100, 100)).convert('RGB')
+        y, w = yellow_mask(img)
 
         if USE_INKY:
             img = convert_img(w, y, img_size)
             inky_disp.set_image(img.rotate(180))
             inky_disp.show()
-            break
+            time.sleep(30)
         else:
             y.save(out / f'{fp.stem}_yellow.png')
             w.save(out / f'{fp.stem}_white.png')

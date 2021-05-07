@@ -8,8 +8,8 @@ from inky.auto import auto
 
 from util.config import command
 from util.text_request import get_txt
-from util.main_img import forecast
-
+from main_img import forecast
+from phat_img import yellow_mask, convert_img
 
 def main(args):
     print('Get weather forecast data...')
@@ -20,11 +20,14 @@ def main(args):
     print('Detect inky module...')
     inky_disp = auto(ask_user=True, verbose=True)
     inky_disp.set_border(inky_disp.WHITE)
-    print('pHat Display Size:', inky_disp.resolution)
+    inky_size = inky_disp.resolution
+    print('pHat Display Size:', inky_size)
 
-    img = forecast(text, dark_mode=True,font='IPAexGothic').resize(
-        inky_disp.resolution).convert('L')
-    inky_disp.set_image(img)
+    img = forecast(text, dark_mode=True, font='IPAexGothic').resize(inky_size).convert('RGB')
+    print(img.size)
+    y, w = yellow_mask(img)
+    img = convert_img(w, y, inky_size)
+    inky_disp.set_image(img.rotate(180))
     inky_disp.show()
 
     return 0
