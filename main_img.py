@@ -70,7 +70,7 @@ def main(args):
 
     img = forecast_all(text, dark_mode=args.dark)
     img.save('forecast_all.png')
-    img = forecast(text, dark_mode=args.dark).resize((250,122))
+    img = forecast(text, dark_mode=args.dark).resize((250, 122))
     img.save('forecast_small.png')
     return 0
 
