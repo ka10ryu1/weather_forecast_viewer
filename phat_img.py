@@ -2,6 +2,7 @@
 # -*-coding: utf-8 -*-
 # pylint: disable=invalid-name,no-member
 import time
+import argparse
 from PIL import Image
 from pathlib import Path
 
@@ -13,8 +14,17 @@ except ModuleNotFoundError as e:
     USE_INKY = False
 
 
-# , mask=(inky_display.WHITE, inky_display.BLACK, inky_display.RED)):
-def yellow_mask(img,max_val=255):
+def command():
+    parser = argparse.ArgumentParser(description='天気表示')
+    parser.add_argument(
+        '-i', '--img', type=Path,
+        help='input image [default: %(default)s]'
+    )
+    args = parser.parse_args()
+    return args
+
+
+def yellow_mask(img, max_val=255):
     _, _, src = img.split()
     _y = Image.new('1', src.size)
     _w = Image.new('1', src.size)
@@ -26,13 +36,16 @@ def yellow_mask(img,max_val=255):
             pos = (x, y)
             p = src.getpixel(pos)
             colors.append(p)
-            if p < 60:
+            if 50 < p and p < 60:
+                if y < 16 or 32 < y:
+                    continue
+
                 _y.putpixel(pos, max_val)
             elif 100 < p:
                 _w.putpixel(pos, max_val)
 
     print('yellow mask:', sorted(list(set(colors))))
-    return _y, _w
+    return _y, _w, src
 
 
 def convert_img(white, yellow, img_size):
@@ -58,7 +71,7 @@ def convert_img(white, yellow, img_size):
     return img
 
 
-def main():
+def test():
     img_size = (250, 122)
     if USE_INKY:
         inky_disp = auto(ask_user=True, verbose=True)
@@ -86,5 +99,36 @@ def main():
     return 0
 
 
+def main(args):
+    if args.img is None:
+        return test()
+
+    img_size = (250, 122)
+    if USE_INKY:
+        inky_disp = auto(ask_user=True, verbose=True)
+        inky_disp.set_border(inky_disp.BLACK)
+        img_size = inky_disp.resolution
+
+    out = Path('out')
+    out.mkdir(parents=True, exist_ok=True)
+    print('image size:', img_size)
+    print(args.img.as_posix())
+    img = Image.open(args.img).convert('RGB')
+    y, w, b = yellow_mask(img)
+
+    if USE_INKY:
+        img = convert_img(w, y, img_size)
+        inky_disp.set_image(img.rotate(180))
+        inky_disp.show()
+        time.sleep(30)
+    else:
+        img.save(out / f'{args.img.stem}_org.png')
+        b.save(out / f'{args.img.stem}_b.png')
+        y.save(out / f'{args.img.stem}_yellow.png')
+        w.save(out / f'{args.img.stem}_white.png')
+
+    return 0
+
+
 if __name__ == '__main__':
-    exit(main())
+    exit(main(command()))
