@@ -36,7 +36,7 @@ def yellow_mask(img, max_val=255):
             pos = (x, y)
             p = src.getpixel(pos)
             colors.append(p)
-            if 50 < p and p < 60:
+            if 40 < p and p < 70:
                 if y < 16 or 32 < y:
                     continue
 

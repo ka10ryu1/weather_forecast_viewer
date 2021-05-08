@@ -29,7 +29,7 @@ def forecast(html_doc, symbol, dark_mode=False, row=4, col=1, tmp_row=4, font='I
     plt.tight_layout()
     fig.text(0.1, 0.91, h2f.timestamp, color=fg, fontsize=16)
     fig.canvas.draw()
-    img = draw_img(fig, h2f.symbol, (15, 40, 18), 30)
+    img = draw_img(fig, h2f.symbol, (6, 40, 18), 38)
     return img
 
 
