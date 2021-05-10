@@ -95,9 +95,9 @@ class HTML2Fig(object):
             d = int(date.split('-')[2])
             h = int(time.split(':')[0]) + 9
             if self._small:
-                h =f'{h if h <= 24 else (h - 24)}'
+                h = f'{h if h <= 24 else (h - 24)}'
             else:
-                h =f'{d if h <= 24 else (d + 1)}-{h if h <= 24 else (h - 24)}'
+                h = f'{d if h <= 24 else (d + 1)}-{h if h <= 24 else (h - 24)}'
 
             self._hour.append(h)
             self._symbol.append(self._icon(sfc.symbol, 'var'))
@@ -112,7 +112,7 @@ class HTML2Fig(object):
     def _value_plot(self, ax, x, y, offset):
 
         for _x, _y in zip(x, y):
-            y_val = f'{int(_y)}' if self._small else f'{_y:.1f}' 
+            y_val = f'{int(_y)}' if self._small else f'{_y:.1f}'
             ax.text(
                 _x, _y + offset, y_val,
                 horizontalalignment='center', color=self._fg, fontsize=15
@@ -182,21 +182,21 @@ class HTML2Fig(object):
 
         x = np.array(x)
         y = np.array(y)
-        color = 'white' if gray else 'mediumblue' 
+        color = 'white' if gray else 'mediumblue'
         ax.scatter(
             x[y < 10], y[y < 10], c=color, zorder=10
         )
-        color = 'white' if gray else 'gold' 
+        color = 'white' if gray else 'gold'
         ax.scatter(
             x[(y >= 10) & (y < 20)], y[(y >= 10) & (y < 20)],
             c=color, zorder=10
         )
-        color = 'white' if gray else 'orange' 
+        color = 'white' if gray else 'orange'
         ax.scatter(
             x[(y >= 20) & (y < 30)], y[(y >= 20) & (y < 30)],
             c=color, zorder=10
         )
-        color = 'white' if gray else 'firebrick' 
+        color = 'white' if gray else 'firebrick'
         ax.scatter(
             x[y >= 30], y[y >= 30], c=color, zorder=10
         )

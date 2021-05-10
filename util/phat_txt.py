@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-
+#!/usr/bin/env python3
 import argparse
 
 from PIL import Image, ImageFont, ImageDraw
@@ -11,10 +10,10 @@ from inky.auto import auto
 try:
     inky_display = auto(ask_user=True, verbose=True)
 except TypeError:
-    raise TypeError("You need to update the Inky library to >= v1.1.0")
+    raise TypeError('You need to update the Inky library to >= v1.1.0')
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--name', '-n', type=str, required=True, help="Your name")
+parser.add_argument('--name', '-n', type=str, required=True, help='Your name')
 args, _ = parser.parse_known_args()
 
 # inky_display.set_rotation(180)
@@ -38,14 +37,16 @@ if inky_display.resolution == (600, 448):
 
 # Create a new canvas to draw on
 
-img = Image.new("P", inky_display.resolution)
+img = Image.new('P', inky_display.resolution)
 draw = ImageDraw.Draw(img)
 
 # Load the fonts
 
 intuitive_font = ImageFont.truetype(Intuitive, int(22 * scale_size))
 hanken_bold_font = ImageFont.truetype(HankenGroteskBold, int(35 * scale_size))
-hanken_medium_font = ImageFont.truetype(HankenGroteskMedium, int(16 * scale_size))
+hanken_medium_font = ImageFont.truetype(
+    HankenGroteskMedium, int(16 * scale_size)
+)
 
 # Grab the name to be displayed
 
@@ -60,7 +61,9 @@ y_bottom = y_top + int(inky_display.height * (4.0 / 10.0))
 
 for y in range(0, y_top):
     for x in range(0, inky_display.width):
-        img.putpixel((x, y), inky_display.BLACK if inky_display.colour == "black" else inky_display.RED)
+        img.putpixel(
+            (x, y), inky_display.BLACK if inky_display.colour == 'black' else inky_display.RED
+        )
 
 for y in range(y_top, y_bottom):
     for x in range(0, inky_display.width):
@@ -68,23 +71,29 @@ for y in range(y_top, y_bottom):
 
 for y in range(y_bottom, inky_display.height):
     for x in range(0, inky_display.width):
-        img.putpixel((x, y), inky_display.BLACK if inky_display.colour == "black" else inky_display.RED)
+        img.putpixel(
+            (x, y), inky_display.BLACK if inky_display.colour == 'black' else inky_display.RED
+        )
 
-# Calculate the positioning and draw the "Hello" text
+# Calculate the positioning and draw the 'Hello' text
 
-hello_txt = "Hello"
+hello_txt = 'Hello'
 hello_w, hello_h = hanken_bold_font.getsize(hello_txt)
 hello_x = int((inky_display.width - hello_w) / 2)
 hello_y = 0 + padding
-draw.text((hello_x, hello_y), hello_txt, inky_display.WHITE, font=hanken_bold_font)
+draw.text(
+    (hello_x, hello_y), hello_txt, inky_display.WHITE, font=hanken_bold_font
+)
 
-# Calculate the positioning and draw the "my name is" text
+# Calculate the positioning and draw the 'my name is' text
 
-mynameis_txt="IP Address is"
-mynameis_w, mynameis_h = hanken_medium_font.getsize(mynameis_txt)
-mynameis_x = int((inky_display.width - mynameis_w) / 2)
-mynameis_y = hello_h + padding
-draw.text((mynameis_x, mynameis_y), mynameis_txt, inky_display.WHITE, font=hanken_medium_font)
+sub_txt = 'IP Address is'
+sub_w, sub_h = hanken_medium_font.getsize(sub_txt)
+sub_x = int((inky_display.width - sub_w) / 2)
+sub_y = hello_h + padding
+draw.text(
+    (sub_x, sub_y), sub_txt, inky_display.WHITE, font=hanken_medium_font
+)
 
 # Calculate the positioning and draw the name text
 

@@ -1,15 +1,13 @@
 #!/usr/bin/env python3
 # -*-coding: utf-8 -*-
 # pylint: disable=invalid-name,no-member
-from PIL import Image
-from pathlib import Path
-
 from inky.auto import auto
 
 from util.config import command
 from util.text_request import get_txt
 from main_img import forecast
 from phat_img import yellow_mask, convert_img
+
 
 def main(args):
     print('Get weather forecast data...')
@@ -23,8 +21,11 @@ def main(args):
     inky_size = inky_disp.resolution
     print('pHat Display Size:', inky_size)
 
-    img = forecast(text, args.symbol, dark_mode=True, font='IPAexGothic').resize(inky_size).convert('RGB')
+    img = forecast(
+        text, args.symbol, dark_mode=True, font='IPAexGothic'
+    ).resize(inky_size).convert('RGB')
     print(img.size)
+
     y, w, _ = yellow_mask(img)
     img = convert_img(w, y, inky_size)
     inky_disp.set_image(img.rotate(180))
