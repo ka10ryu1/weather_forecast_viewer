@@ -1,13 +1,43 @@
 # weather_forecast_viewer
 天気予報を取得し、表示するためのレポジトリ
 
-# 導入手順
+# とりあえず動かす
+
+## ライブラリ
+
+- pip3
+  - matplotlib
+  - numpy（upgrade）
+- apt
+  - libopenjp2-7
+  - python-numpy
+  - libatlas-base-dev
+  - fonts-ipaexfont-gothic
+  - fontconfig
+
+## 端末上に表示
+
+```bash
+python3 ./main_emoji.py
+```
+
+## 画像として表示
+
+```bash
+python3 ./main_img.py
+```
+
+# お天気表示デバイス導入手順
 
 ## ハードウェア
 
 ### Raspberry pi Zero WH
 
-#### OSインストール
+### inky pHat
+
+## ソフトウェア
+
+### OSインストール
 
 Raspberry Pi ImagerでOSをインストールする。  
 以下は「Raspberry Pi OS Lite (32bit)」をインストールして進めている。
@@ -29,14 +59,8 @@ example
 
 https://github.com/pimoroni/inky
 
-## ライブラリ
 
-- pip3
-  - matplotlib
-  - numpy（updrade）
-- apt
-  - libopenjp2-7
-  - python-numpy
-  - libatlas-base-dev
-  - fonts-ipaexfont-gothic
-  - fontconfig
+
+## 定期実行
+
+cron
