@@ -61,16 +61,56 @@ def print_status(in_dict):
         print(f'{i:2} | {key}\t{item}')
 
 
-def get_txt(args, fc_type):
+def get_some_txt(args, fc_types):
     ug = UrlGen(
         'http://api.openweathermap.org/data/2.5/',
         'http://geoapi.heartrails.com/api/',
         args.api_key
     )
     url, params = ug.from_zip(args.zip_code)
-    url = f'{url}{fc_type}'
 
-    req = requests.get(url, params=params)
+    rslt = {}
+    for fc_type in fc_types:
+        req = requests.get(f'{url}{fc_type}', params=params)
+        print(fc_type)
+        print_status(req.headers)
+        if req.status_code < 400:
+            rslt[fc_type] = req.text
+            continue
+
+        # openweathermapの郵便番号検索が上手く機能しなかった場合、
+        # geoapiで郵便番号から緯度経度を算出して場所を特定する
+        print(req.status_code)
+        x, y = ug.zip2xy(args.zip_code)
+        if x is None:
+            rslt[fc_type] = None
+            continue
+
+        print(f'geoapi:{args.zip_code} -> ({x}, {y})')
+        url, params = ug.from_xy(x, y)
+        req = requests.get(f'{url}{fc_type}', params=params)
+        print_status(req.headers)
+        if req.status_code < 400:
+            rslt[fc_type] = req.text
+            continue
+
+        # それでも見つからない場合はNoneを返す
+        print(req.status_code)
+        rslt[fc_type] = None
+
+    return rslt
+
+
+def get_txt(args, fc_type):
+
+    ug = UrlGen(
+        'http://api.openweathermap.org/data/2.5/',
+        'http://geoapi.heartrails.com/api/',
+        args.api_key
+    )
+    url, params = ug.from_zip(args.zip_code)
+    req = requests.get(f'{url}{fc_type}', params=params)
+
     print_status(req.headers)
     if req.status_code < 400:
         return req.text
@@ -84,9 +124,7 @@ def get_txt(args, fc_type):
 
     print(f'geoapi:{args.zip_code} -> ({x}, {y})')
     url, params = ug.from_xy(x, y)
-    url = f'{url}{fc_type}'
-
-    req = requests.get(url, params=params)
+    req = requests.get(f'{url}{fc_type}', params=params)
     print_status(req.headers)
     if req.status_code < 400:
         return req.text

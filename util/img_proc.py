@@ -7,14 +7,46 @@ from datetime import datetime as dt
 
 import numpy as np
 from matplotlib import ticker
+from matplotlib.patheffects import withStroke
 from bs4 import BeautifulSoup
+
+
+def txt2icon(txt, base, ext='.png'):
+
+    if '01' in txt:    # 快晴
+        name = '2600' if 'd' in txt else '2b50'
+    elif '02' in txt:  # 晴れ
+        name = '1f324' if 'd' in txt else '2b50'
+    elif '03' in txt:  # 曇り
+        name = '1f325' if 'd' in txt else '2b50'
+    elif '04' in txt:  # 曇り
+        name = '2601'
+    elif '09' in txt:  # 霧雨
+        name = '1f326'
+    elif '10' in txt:  # 雨
+        name = '1f327'
+    elif '11' in txt:  # 雷雨
+        name = '26c8'
+    elif '13' in txt:  # 雪
+        name = '2744'
+    elif '50' in txt:  # 霧
+        name = '1f32b'
+
+    return base / f'{name}{ext}'
+
+
+def get_weather_img(text, base):
+    icon_path = txt2icon(
+        BeautifulSoup(text, 'html.parser').weather.get('icon'), base
+    )
+    return Image.open(icon_path)
 
 
 class HTML2Fig(object):
 
     def __init__(self, html_doc, bg, fg, small=False, base=Path.cwd() / 'symbol'):
         self._hour = []
-        self._symbol = []
+        self._symbols = []
         self._temp = []
         self._humid = []
         self._wind = []
@@ -26,56 +58,34 @@ class HTML2Fig(object):
         self.__call__(html_doc)
 
     @property
-    def symbol(self):
-        return self._symbol
+    def symbols(self):
+        return self._symbols
 
     @property
     def temp(self):
-        return self._temp
+        return list(map(int, self._temp))
 
     @property
     def humid(self):
-        return self._humid
+        return list(map(int, self._humid))
 
     @property
     def wind(self):
-        return self._wind
+        return [round(i, 1) for i in self._wind]
 
     @property
     def timestamp(self):
-        return self._timestamp
+        timestamps = self._timestamp.split('-')
+        return f'{"/".join(timestamps[:3])} {":".join(timestamps[3:])}'
 
     def __repr__(self):
         hour = self._hour[-1]
-        symbol = self._symbol[-1].as_posix()
+        symbols = self._symbols[-1].as_posix()
         temp = self._temp[-1]
         humid = self._humid[-1]
         wind = self._wind[-1]
         # return f'{hour=:5}, {symbol=:},\t{temp=:5.2f}, {humid=:4.1f}, {wind=:5.2f}'
-        return f'h={hour:5}, sym={symbol:},\ttmp{temp:5.2f}, hmd={humid:4.1f}, win={wind:5.2f}'
-
-    def _txt2icon(self, txt, ext='.png'):
-
-        if '01' in txt:    # 快晴
-            name = '2600' if 'd' in txt else '2b50'
-        elif '02' in txt:  # 晴れ
-            name = '1f324' if 'd' in txt else '2b50'
-        elif '03' in txt:  # 曇り
-            name = '1f325' if 'd' in txt else '2b50'
-        elif '04' in txt:  # 曇り
-            name = '2601'
-        elif '09' in txt:  # 霧雨
-            name = '1f326'
-        elif '10' in txt:  # 雨
-            name = '1f327'
-        elif '11' in txt:  # 雷雨
-            name = '26c8'
-        elif '13' in txt:  # 雪
-            name = '2744'
-        elif '50' in txt:  # 霧
-            name = '1f32b'
-
-        return self._base / f'{name}{ext}'
+        return f'h={hour:5}, sym={symbols:},\ttmp{temp:5.2f}, hmd={humid:4.1f}, win={wind:5.2f}'
 
     def _str(self, soup, tag):
         return soup.get(tag)
@@ -84,7 +94,7 @@ class HTML2Fig(object):
         return float(self._str(soup, tag))
 
     def _icon(self, soup, tag):
-        return self._txt2icon(self._str(soup, tag))
+        return txt2icon(self._str(soup, tag), self._base)
 
     def __call__(self, html_doc, num=8):
         soup = BeautifulSoup(html_doc, features='html.parser')
@@ -100,7 +110,7 @@ class HTML2Fig(object):
                 h = f'{d if h <= 24 else (d + 1)}-{h if h <= 24 else (h - 24)}'
 
             self._hour.append(h)
-            self._symbol.append(self._icon(sfc.symbol, 'var'))
+            self._symbols.append(self._icon(sfc.symbol, 'var'))
             self._temp.append(self._float(sfc.temperature, 'value'))
             self._humid.append(self._float(sfc.humidity, 'value'))
             self._wind.append(self._float(sfc.windspeed, 'mps'))
@@ -109,16 +119,19 @@ class HTML2Fig(object):
         self._timestamp = f'{locate} {dt.now().strftime("%Y-%m-%d-%H-%M-%S")}'
         return True
 
-    def _value_plot(self, ax, x, y, offset):
+    def _value_plot(self, ax, x, y, font_size, offset):
 
+        ax_kwgs = {
+            'horizontalalignment': 'center',
+            'color': self._fg,
+            'fontsize': font_size
+        }
         for _x, _y in zip(x, y):
-            y_val = f'{int(_y)}' if self._small else f'{_y:.1f}'
             ax.text(
-                _x, _y + offset, y_val,
-                horizontalalignment='center', color=self._fg, fontsize=15
+                _x, _y + offset, f'{int(_y)}' if self._small else f'{_y}', **ax_kwgs
             )
 
-    def _set_spines(self, ax):
+    def _set_spines(self, ax, label_size):
         ax.spines['top'].set_linewidth(0)
         ax.spines['right'].set_linewidth(0)
         ax.spines['left'].set_linewidth(2)
@@ -129,11 +142,16 @@ class HTML2Fig(object):
         # tick setting
         ax.tick_params(direction='in', length=6, width=2, color=self._fg)
         ax.tick_params(axis='both', colors=self._fg)
-        ax.tick_params(labelsize=14)
+        ax.tick_params(labelsize=label_size)
 
-    def temp_plot(self, ax, offset, gray=False):
+    def temp_plot(self, ax, offset, small=False, gray=False):
         x = self._hour
-        y = self._temp
+        y = self.temp
+
+        line_width = 4 if small else 10
+        marker_size = 80 if small else 400
+        label_size = 14 if small else 24
+        font_size = 15 if small else 32
 
         if gray:
             color = 'white'
@@ -174,42 +192,48 @@ class HTML2Fig(object):
         else:
             ymin = 35 - diff
 
-        self._set_spines(ax)
+        self._set_spines(ax, label_size)
         ax.yaxis.set_major_locator(ticker.AutoLocator())
         ax.set_ylim(ymin, ymin + 16)
-        ax.plot(x, y, c=color)
-        self._value_plot(ax, x, y, offset)
+        ax.plot(x, y, c=color, linewidth=line_width)
+        self._value_plot(ax, x, y, font_size, offset)
 
         x = np.array(x)
         y = np.array(y)
-        color = 'white' if gray else 'mediumblue'
+        ax_kwgs = {
+            'zorder': 10, 's': marker_size,
+            'path_effects': [withStroke(linewidth=10, foreground='white')]
+        }
         ax.scatter(
-            x[y < 10], y[y < 10], c=color, zorder=10
+            x[y < 10], y[y < 10],
+            c='white' if gray else 'mediumblue', **ax_kwgs
         )
-        color = 'white' if gray else 'gold'
         ax.scatter(
             x[(y >= 10) & (y < 20)], y[(y >= 10) & (y < 20)],
-            c=color, zorder=10
+            c='white' if gray else 'gold',  **ax_kwgs
         )
-        color = 'white' if gray else 'orange'
         ax.scatter(
             x[(y >= 20) & (y < 30)], y[(y >= 20) & (y < 30)],
-            c=color, zorder=10
+            c='white' if gray else 'orange', **ax_kwgs
         )
-        color = 'white' if gray else 'firebrick'
         ax.scatter(
-            x[y >= 30], y[y >= 30], c=color, zorder=10
+            x[y >= 30], y[y >= 30],
+            c='white' if gray else 'firebrick', **ax_kwgs
         )
 
     def other_plot(self, ax, y, color, ylim):
         x = self._hour
-        self._set_spines(ax)
+        self._set_spines(ax, 20)
         ax.xaxis.set_major_locator(ticker.AutoLocator())
         ax.yaxis.set_major_locator(ticker.AutoLocator())
-        ax.plot(x, y, c=color, marker='o')
+        ax_kwgs = {
+            'c': color, 'linewidth': 8, 'marker': 'o', 'markersize': 20,
+            'path_effects': [withStroke(linewidth=10, foreground='white')]
+        }
+        ax.plot(x, y, **ax_kwgs)
         ax.set_xticks([])
         ax.set_ylim(ylim[0], ylim[1])
-        self._value_plot(ax, x, y, ylim[1] // 10)
+        self._value_plot(ax, x, y, 32, ylim[1] // 3)
 
 
 def get_concat_h(imgs, offset):
@@ -221,17 +245,20 @@ def get_concat_h(imgs, offset):
     return dst
 
 
-def draw_img(fig, symbol, offset, img_size=50):
+def get_concat_v(img1, img2):
+    dst = Image.new('RGBA', (img1.width, img1.height + img2.height))
+    dst.paste(img1, (0, 0))
+    dst.paste(img2, (0, img1.height))
+    return dst
+
+
+def draw_img(fig, symbol, offset, img_size=160):
     fig_img = Image.fromarray(np.array(fig.canvas.renderer.buffer_rgba()))
     fw, fh = fig_img.size
     img = get_concat_h(
-        [
-            Image.open(fp).resize((img_size, img_size))
-            for fp in symbol
-        ], offset[0]
+        [Image.open(fp).resize((img_size, img_size)) for fp in symbol],
+        offset[0]
     )
-    iw, ih = img.size
     clear_img = Image.new('RGBA', (fw, fh))
     clear_img.paste(img, (offset[1], offset[2]))
-    total_img = Image.alpha_composite(fig_img, clear_img)
-    return total_img
+    return Image.alpha_composite(fig_img, clear_img)
