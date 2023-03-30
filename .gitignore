@@ -1,5 +1,5 @@
 weather_config.json
-*.png
+#*.png
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
