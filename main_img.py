@@ -95,17 +95,21 @@ def draw_footer(img, base, text, height=40, width=640):
     dst.paste(img_a, (offset + dist * 2, 0), img_a)
 
     draw = ImageDraw.Draw(dst)
-    offset_x = 350
-    offset_y = 6
-    font = ImageFont.truetype('ipaexg.ttf', 24)
-    draw.text((offset_x, offset_y), '最高', 'firebrick', font=font)
-    draw.text((offset_x + 140, offset_y), '最低', 'royalblue', font=font)
+    x = 350
+    y = 6
+    draw_kwgs = {
+        'font': ImageFont.truetype('ipaexg.ttf', 24),
+        'stroke_width': 2, 'stroke_fill': 'white',
+    }
+    draw.text((x, y), '最高', 'firebrick', **draw_kwgs)
+    draw.text((x + 145, y), '最低', 'royalblue', **draw_kwgs)
     font = ImageFont.truetype('ipaexg.ttf', 32)
-    offset_x += 50
-    offset_y = 0
-    draw.text((offset_x, offset_y), max_temp, 'white', font=font)
-    draw.text((offset_x + 150, offset_y), min_temp, 'white', font=font)
+    x += 50
+    y = 0
+    draw.text((x, y), max_temp, 'white', font=font)
+    draw.text((x + 145, y), min_temp, 'white', font=font)
     return get_concat_v(img, dst)
+
 
 def main(args):
 
