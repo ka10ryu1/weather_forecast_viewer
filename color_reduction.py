@@ -148,9 +148,7 @@ def main(args):
     else:
         img = hsv_mode(img, args.debug)
 
-    if args.debug:
-        img.save(f'reduction_{args.mode}.png')
-
+    img.save(f'reduction_{args.mode}.png')
     return 0
 
 
