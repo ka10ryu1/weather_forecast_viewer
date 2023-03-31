@@ -13,7 +13,8 @@
   - requests
 - apt
   - libopenjp2-7
-  - python-numpy
+  - python3-numpy
+  - python3-matplotlib
   - libatlas-base-dev
   - fonts-ipaexfont-gothic
   - fontconfig
