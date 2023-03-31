@@ -47,11 +47,11 @@ def forecast_all(html_doc, symbol, dark_mode=False, row=5, col=1, tmp_row=3, fon
     )
     h2f.other_plot(
         fig.add_subplot(row, col, row - 1, fc=bg),
-        h2f.humid, 'deepskyblue', (0, 100)
+        h2f.humid, 'blue', (0, 100)
     )
     h2f.other_plot(
         fig.add_subplot(row, col, row, fc=bg),
-        h2f.wind, 'springgreen', (0, 10)
+        h2f.wind, 'green', (0, 10)
     )
     fig.text(0.02, 0.94, h2f.timestamp, color=fg, fontsize=32)
 
@@ -72,7 +72,7 @@ def get_temp(text):
     return max_temp, min_temp
 
 
-def draw_footer(base, text, height=40, width=640):
+def draw_footer(img, base, text, height=40, width=640):
     m, d, a = dt.now().strftime('%m %d %a').split()
     c_size = (60, 90, 520, 250)  # Left, Up, Right, Bottom
     r_size = (115, height)
@@ -86,7 +86,7 @@ def draw_footer(base, text, height=40, width=640):
 
     dst = Image.new('RGBA', (width, height), (0, 0, 0))
     offset = 30
-    dst.paste(img_w, (offset, 0))
+    dst.paste(img_w, (offset, 0), img_w.convert('1'))
     offset = 60
     dist = 105
     dst.paste(img_m, (offset, 0), img_m)
@@ -105,8 +105,7 @@ def draw_footer(base, text, height=40, width=640):
     offset_y = 0
     draw.text((offset_x, offset_y), max_temp, 'white', font=font)
     draw.text((offset_x + 150, offset_y), min_temp, 'white', font=font)
-    return dst
-
+    return get_concat_v(img, dst)
 
 def main(args):
 
@@ -114,11 +113,10 @@ def main(args):
     if text is None:
         return -1
 
-    main_img = forecast_all(
+    img = forecast_all(
         text['forecast'], args.symbol, dark_mode=args.dark
     ).resize((640, 360))
-    footer_img = draw_footer(args.symbol, text['weather'])
-    get_concat_v(main_img, footer_img).save('forecast_all.png')
+    draw_footer(img, args.symbol, text['weather']).save('forecast_all.png')
 
     img = forecast(
         text['forecast'], args.symbol, dark_mode=args.dark
