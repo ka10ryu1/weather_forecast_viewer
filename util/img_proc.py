@@ -226,11 +226,13 @@ class HTML2Fig(object):
         self._set_spines(ax, 20)
         ax.xaxis.set_major_locator(ticker.AutoLocator())
         ax.yaxis.set_major_locator(ticker.AutoLocator())
+        ax_kwgs = {'c': color, 'linewidth': 8, }
+        ax.plot(x, y, **ax_kwgs)
         ax_kwgs = {
-            'c': color, 'linewidth': 8, 'marker': 'o', 'markersize': 20,
+            'zorder': 10, 'c': color, 'marker': 'o', 's': 400,
             'path_effects': [withStroke(linewidth=10, foreground='white')]
         }
-        ax.plot(x, y, **ax_kwgs)
+        ax.scatter(x, y, **ax_kwgs)
         ax.set_xticks([])
         ax.set_ylim(ylim[0], ylim[1])
         self._value_plot(ax, x, y, 32, ylim[1] // 3)
