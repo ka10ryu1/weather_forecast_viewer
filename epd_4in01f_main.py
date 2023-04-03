@@ -3,8 +3,8 @@
 import socket
 from PIL import Image, ImageDraw, ImageFont
 
+from epd_4in01f.util import EPD
 from util.config import command
-from util.epd4in01f import EPD
 from util.text_request import get_some_txt
 from color_reduction import hsv_mode
 from main_img import forecast_all, draw_footer
