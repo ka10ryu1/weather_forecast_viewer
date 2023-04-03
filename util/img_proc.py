@@ -254,6 +254,10 @@ def get_concat_v(img1, img2):
     return dst
 
 
+def thresh_bin(img, thresh=128):
+    return img.convert('L').point(lambda i: 1 if i > thresh else 0, mode='1')
+
+
 def draw_img(fig, symbol, offset, img_size=160):
     fig_img = Image.fromarray(np.array(fig.canvas.renderer.buffer_rgba()))
     fw, fh = fig_img.size
@@ -263,4 +267,5 @@ def draw_img(fig, symbol, offset, img_size=160):
     )
     clear_img = Image.new('RGBA', (fw, fh))
     clear_img.paste(img, (offset[1], offset[2]))
-    return Image.alpha_composite(fig_img, clear_img)
+    clear_img.paste(fig_img, mask=thresh_bin(fig_img, 5))
+    return clear_img
