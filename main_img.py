@@ -61,6 +61,9 @@ def forecast_all(html_doc, symbol, dark_mode=False, row=5, col=1, tmp_row=3, fon
 
 
 def open_crop_resize(path, crop_size, resize):
+    if not path.exists():
+        return None
+    
     return Image.open(path).crop(crop_size).resize(resize)
 
 
@@ -90,7 +93,9 @@ def draw_footer(img, base, text, height=40, width=640):
     offset = 60
     dist = 105
     dst.paste(img_m, (offset, 0), img_m)
-    dst.paste(img_d1, (offset + dist, 0), img_d1)
+    if img_d1 is not None:
+        dst.paste(img_d1, (offset + dist, 0), img_d1)
+
     dst.paste(img_d0, (offset + dist, 0), img_d0)
     dst.paste(img_a, (offset + dist * 2, 0), img_a)
 
