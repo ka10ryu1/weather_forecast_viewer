@@ -23,7 +23,7 @@ def forecast(html_doc, symbol, dark_mode=False, row=4, col=1, tmp_row=4, font='I
     h2f = HTML2Fig(html_doc, bg, fg, small=True, base=symbol)
     h2f.temp_plot(
         fig.add_subplot(row, col, (2, tmp_row), fc=bg),
-        2, small=True, gray=True
+        2, gray=True
     )
     plt.tight_layout()
     fig.text(0.02, 0.91, h2f.timestamp, color=fg, fontsize=14)

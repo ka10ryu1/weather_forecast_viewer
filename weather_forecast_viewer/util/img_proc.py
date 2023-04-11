@@ -99,15 +99,21 @@ class HTML2Fig(object):
     def __call__(self, html_doc, num=8):
         soup = BeautifulSoup(html_doc, features='html.parser')
         locate = soup.weatherdata.location.find('name').string
+        next_day = ''
 
         for sfc in soup.forecast.contents[:num]:
             date, time = sfc.get('from').split('T')
             d = int(date.split('-')[2])
             h = int(time.split(':')[0]) + 9
-            if self._small:
-                h = f'{h if h <= 24 else (h - 24)}'
-            else:
-                h = f'{d if h <= 24 else (d + 1)}-{h if h <= 24 else (h - 24)}'
+            if not next_day and 24 < h:
+                next_day = f'{d + 1}-'
+            elif str(d) in next_day:
+                h += 24
+
+            h = f'{(h - 24) if next_day else h}'
+            # print(f'{date=}, {time=}, {d=}, {h=}, {next_day=}')
+            if not self._small:
+                h = f'{next_day if next_day else ""}{h}'
 
             self._hour.append(h)
             self._symbols.append(self._icon(sfc.symbol, 'var'))
@@ -144,14 +150,14 @@ class HTML2Fig(object):
         ax.tick_params(axis='both', colors=self._fg)
         ax.tick_params(labelsize=label_size)
 
-    def temp_plot(self, ax, offset, small=False, gray=False):
+    def temp_plot(self, ax, offset, gray=False):
         x = self._hour
         y = self.temp
 
-        line_width = 4 if small else 10
-        marker_size = 80 if small else 400
-        label_size = 14 if small else 24
-        font_size = 15 if small else 32
+        line_width = 4 if self._small else 10
+        marker_size = 80 if self._small else 400
+        label_size = 14 if self._small else 32
+        font_size = 15 if self._small else 32
 
         if gray:
             color = 'white'
