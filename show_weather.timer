@@ -1,0 +1,21 @@
+[Unit]
+Description=Weather_forecast_viewer_script(epd_4in01f)
+
+[Timer]
+# ブート後実行
+OnBootSec=2min
+# 定期実行
+OnCalendar=6:15
+OnCalendar=7:45
+OnCalendar=9:15
+OnCalendar=11:45
+OnCalendar=12:15
+OnCalendar=13:45
+OnCalendar=15:15
+OnCalendar=16:45
+OnCalendar=18:15
+OnCalendar=19:45
+OnCalendar=21:15
+
+[Install]
+WantedBy=timers.target

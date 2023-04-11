@@ -63,9 +63,39 @@ example
 
 https://github.com/pimoroni/inky
 
-## 定期実行
+## 定期実行する方法
 
-cron
+スクリプトを/opt直下へ引っ越し
+
+```bash
+sudo cp -r weather_forecast_viewer/ /opt/
+```
+
+systemdの設定
+
+```bash
+sudo cp show_* /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable show_ip.service
+sudo systemctl enable show_weather.timer
+sudo reboot
+```
+
+### 設定を変更したい場合
+
+設定を変更した設定ファイルを再度`/etc/systemd/system/`に置く
+
+```bash
+sudo cp show_* /etc/systemd/system/
+sudo systemctl daemon-reload
+```
+
+設定が変更されているかは`systemctl show <unit_name>`で確認できる
+
+```bash
+sudo systemctl show show_weather.timer
+```
+
 
 ## エラーが出た
 

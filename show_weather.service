@@ -1,0 +1,5 @@
+[Unit]
+Description=Weather_forecast_viewer_script(epd_4in01f)
+
+[Service]
+ExecStart=/opt/weather_forecast_viewer/epd_4in01f/show_weather.sh
