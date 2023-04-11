@@ -51,7 +51,7 @@ def forecast_all(html_doc, symbol, dark_mode=False, row=5, col=1, tmp_row=3, fon
     )
     h2f.other_plot(
         fig.add_subplot(row, col, row, fc=bg),
-        h2f.wind, 'green', (0, 10)
+        h2f.wind, 'green', (0, 12)
     )
     fig.text(0.02, 0.94, h2f.timestamp, color=fg, fontsize=32)
 
@@ -63,7 +63,7 @@ def forecast_all(html_doc, symbol, dark_mode=False, row=5, col=1, tmp_row=3, fon
 def open_crop_resize(path, crop_size, resize):
     if not path.exists():
         return None
-    
+
     return Image.open(path).crop(crop_size).resize(resize)
 
 
