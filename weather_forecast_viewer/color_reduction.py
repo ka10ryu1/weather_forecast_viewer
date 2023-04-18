@@ -89,7 +89,7 @@ def rgb_mode(img, debug=False):
 def hsv_filter(h, low, upper):
     return bit_and(
         h.point(lambda i: 1 if i > low else 0, mode='1'),
-        h.point(lambda i: 1 if i < upper else 0, mode='1')
+        h.point(lambda i: 1 if i <= upper else 0, mode='1')
     )
 
 
@@ -121,8 +121,8 @@ def hsv_mode(img, debug=False):
     # Green
     grn = hsv_filter(h, 50, 100)
     img = replace_color(img, (0, 255, 0), grn)
-    # Blue
-    blu = hsv_filter(h, 150, 175)
+    # Blue（Hだけだと漏れる場合があるので、Sも考慮する）
+    blu = bit_and(hsv_filter(h, 130, 175), hsv_filter(s, 140, 255))
     img = replace_color(img, (0, 0, 255), blu)
     # Orange
     org = hsv_filter(h, 10, 30)
