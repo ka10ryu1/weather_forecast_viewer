@@ -1,5 +1,6 @@
 weather_config.json
 *.png
+*.svg
 .vscode
 
 # Byte-compiled / optimized / DLL files
